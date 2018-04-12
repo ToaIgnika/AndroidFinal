@@ -46,13 +46,7 @@ public class MainActivity extends AppCompatActivity implements
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        mAdapter = new ItemAdapter(itemList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
-        sRequestQueue = Volley.newRequestQueue(this);
-        readUrl();
+
     }
 
     @Override
@@ -70,7 +64,14 @@ public class MainActivity extends AppCompatActivity implements
 
         if (status == TextToSpeech.SUCCESS) {
 
-            int result = tts.setLanguage(Locale.JAPAN);
+            int result = tts.setLanguage(Locale.ENGLISH);
+            mAdapter = new ItemAdapter(itemList, tts);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(mAdapter);
+            sRequestQueue = Volley.newRequestQueue(this);
+            readUrl();
 
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -83,10 +84,9 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    private void speakOut() {
-        String text = "three zero zero";
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-        Toast.makeText(this, "hey", Toast.LENGTH_SHORT).show();
+    public void speakOut(String tt) {
+        tts.speak(tt, TextToSpeech.QUEUE_FLUSH, null);
+        //Toast.makeText(this, "hey", Toast.LENGTH_SHORT).show();
     }
 
     private void readUrl() {
