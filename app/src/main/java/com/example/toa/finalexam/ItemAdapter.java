@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -60,26 +61,47 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.CustomViewHold
     public class CustomViewHolder extends RecyclerView.ViewHolder implements TextToSpeech.OnInitListener{
         private TextView title;
         public String url;
+        public HashMap<String, String> map;
         public CustomViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.tv_name);
             System.out.println("HMMM" + getAdapterPosition());
 
+            map = new HashMap<String, String>();
+            map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
 
             tts = new TextToSpeech(context, this);
-            tts.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
-                @Override
-                public void onUtteranceCompleted(String utteranceId) {
-                    link();
-                }
-            });
+
+
+
             //Catch the click on item
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public  void onClick(View v) {
                     String txt = itemList.get(getAdapterPosition()).getName();
                     url = itemList.get(getAdapterPosition()).getUrl();
-                    tts.speak(txt, TextToSpeech.QUEUE_FLUSH, null);
+                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onStart(String utteranceId) {
+                            // Speaking started.
+
+                        }
+
+                        @Override
+                        public void onDone(String utteranceId) {
+                            // Speaking stopped.
+                            System.out.println("DONE");
+                            link();
+                        }
+
+                        @Override
+                        public void onError(String utteranceId) {
+                            // There was an error.
+                        }
+
+                    });
+                    tts.speak(txt, TextToSpeech.QUEUE_FLUSH, map);
+
                 }
             });
         }
