@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements
-        TextToSpeech.OnInitListener{
+        TextToSpeech.OnInitListener {
 
     private TextToSpeech tts;
     private Button btnSpeak;
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
         if (status == TextToSpeech.SUCCESS) {
 
             int result = tts.setLanguage(Locale.ENGLISH);
-            mAdapter = new ItemAdapter(itemList, tts);
+            mAdapter = new ItemAdapter(itemList, tts, this);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
             recyclerView.setLayoutManager(mLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements
     public void speakOut(String tt) {
         tts.speak(tt, TextToSpeech.QUEUE_FLUSH, null);
         //Toast.makeText(this, "hey", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onUtteranceCompleted(String utteranceId) {
+
     }
 
     private void readUrl() {
